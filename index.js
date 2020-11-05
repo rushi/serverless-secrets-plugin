@@ -28,6 +28,10 @@ class ServerlessSecretsPlugin {
         shortcut: 'p',
         required: true,
       },
+      secretsFile: {
+        usage: 'The file to encrypt',
+        required: false,
+      },
     };
 
     this.commands = {
@@ -58,7 +62,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || `secrets.${this.options.stage}.yml`;
       const encryptedCredentialFileName = `${credentialFileName}.encrypted`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       const encryptedCredentialsPath = path.join(servicePath, customPath, encryptedCredentialFileName);
@@ -80,7 +84,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || `secrets.${this.options.stage}.yml`;
       const encryptedCredentialFileName = `${credentialFileName}.encrypted`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       const encryptedCredentialsPath = path.join(servicePath, customPath, encryptedCredentialFileName);
@@ -102,7 +106,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || `secrets.${this.options.stage}.yml`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       fs.access(secretsPath, fs.F_OK, (err) => {
         if (err) {
