@@ -11,6 +11,7 @@ class ServerlessSecretsPlugin {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
+    this.secretsFile = serverless.service.custom.secretsFile; // The file configured in the app's yml serverless config
     if (this.serverless.service.custom && this.serverless.service.custom.secretsFilePathPrefix) {
       this.customPath = this.serverless.service.custom.secretsFilePathPrefix;
     } else {
@@ -27,6 +28,10 @@ class ServerlessSecretsPlugin {
         usage: 'Password to encrypt the file.',
         shortcut: 'p',
         required: true,
+      },
+      secretsFile: {
+        usage: 'The file to encrypt',
+        required: false,
       },
     };
 
@@ -58,7 +63,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || this.secretsFile || `secrets.${this.options.stage}.yml`;
       const encryptedCredentialFileName = `${credentialFileName}.encrypted`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       const encryptedCredentialsPath = path.join(servicePath, customPath, encryptedCredentialFileName);
@@ -80,7 +85,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || this.secretsFile || `secrets.${this.options.stage}.yml`;
       const encryptedCredentialFileName = `${credentialFileName}.encrypted`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       const encryptedCredentialsPath = path.join(servicePath, customPath, encryptedCredentialFileName);
@@ -102,7 +107,7 @@ class ServerlessSecretsPlugin {
     return new BbPromise((resolve, reject) => {
       const servicePath = this.serverless.config.servicePath;
       const customPath = this.customPath;
-      const credentialFileName = `secrets.${this.options.stage}.yml`;
+      const credentialFileName = this.options.secretsFile || this.secretsFile ||  `secrets.${this.options.stage}.yml`;
       const secretsPath = path.join(servicePath, customPath, credentialFileName);
       fs.access(secretsPath, fs.F_OK, (err) => {
         if (err) {
